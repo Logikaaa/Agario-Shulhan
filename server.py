@@ -1,10 +1,14 @@
 from socket import *
 import time
+from threading import Thread
+
 
 sock = socket(AF_INET, SOCK_STREAM)
 sock.bind('localhost', 8080)
 
 sock.listen(5)
+sock.setblocking(False)
+
 
 players = {}
 
@@ -17,4 +21,20 @@ def handle_date():
         player_data = {}
         to_remove = []
 
-        
+        for conn in list(players):
+            try:
+                data = conn.recv(1024).decode().strip()
+                if ',' in data:
+                    parts = data.split(',')
+                    if len(parts) == 4:
+                        pid, x, y, r = map(int, parts)
+                        players[conn] = {'id': pid. 'x': x, 'y': y, 'r': r}
+                        player_data[conn] = players[conn]
+            except:
+                continue
+
+
+Thread(target=handle_date, daemon=True).start()
+
+
+
